@@ -29,6 +29,49 @@ We evaluate the model using two benchmark IIoT datasets: **IoT-23** and **CIC-Io
 - State-of-the-art detection accuracy (99.98% on IoT-23, 99.94% on CIC-IoT 2023)
 - Scalable, latency-sensitive solution aligned with Industry 5.0 cyber-physical requirements
 
+## Implementation
+
+This repository includes a Python implementation of the Aegis-5 framework.
+
+### Setup
+
+```bash
+pip install -r requirements.txt
+```
+
+### Usage
+
+```python
+from aegis5 import Aegis5
+
+model = Aegis5(
+    confidence_threshold=0.95,  # tau for hybrid voting
+    beta=2.0,                   # temperature for dynamic weighting
+    use_feature_selection=True, # ANOVA F-test + RFECV
+    use_pca=True,               # PCA dimensionality reduction
+    use_smote=True              # SMOTE for class imbalance
+)
+
+model.fit(X_train, y_train)
+results = model.evaluate(X_test, y_test)
+```
+
+### Demo
+
+Run the demo with a synthetic IIoT dataset:
+
+```bash
+python demo.py
+```
+
+### Architecture
+
+- **Base Classifiers**: Random Forest, Gradient Boosting, XGBoost, SVM, KNN (tuned hyperparameters from Table 4)
+- **Dynamic Weighting**: Per-class softmax over F1-scores in a sliding window (Eq. 2, K=1000, β=2.0)
+- **Meta-Learner**: Logistic Regression synthesizing weighted base classifier probabilities
+- **Hybrid Voting**: Soft voting when meta-learner confidence ≥ τ (0.95), hard voting otherwise (Algorithm 1)
+- **Preprocessing**: Median imputation → StandardScaler → ANOVA F-test + RFECV → PCA → SMOTE
+
 ## Keywords
 
 Industry 5.0, Smart Manufacturing, Hybrid Ensemble Framework, Real-Time Threat Detection, IIoT Security, Cyber-Physical Systems, Adversarial Training, Meta-Learning
