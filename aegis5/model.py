@@ -160,8 +160,7 @@ class Aegis5:
             'XGBoost': XGBClassifier(
                 learning_rate=0.05, max_depth=10, subsample=0.8,
                 colsample_bytree=0.8, random_state=random_state,
-                use_label_encoder=False, eval_metric='mlogloss',
-                n_jobs=-1
+                eval_metric='mlogloss', n_jobs=-1
             ),
             'SVM': SVC(
                 kernel='rbf', C=10, gamma='scale',
@@ -177,7 +176,6 @@ class Aegis5:
         self.meta_learner = LogisticRegression(
             solver='lbfgs', C=1.0, penalty='l2',
             max_iter=1000, random_state=random_state, n_jobs=-1,
-            multi_class='multinomial'
         )
 
     def _preprocess(self, X, y=None, fit=False):
